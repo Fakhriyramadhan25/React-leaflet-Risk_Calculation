@@ -1,0 +1,7 @@
+.leaflet-tooltip.my-labels {
+    background-color: transparent;
+    border: transparent;
+    box-shadow: none;
+    color: black;
+    font-size: medium;
+    }
