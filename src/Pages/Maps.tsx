@@ -3,9 +3,15 @@ import 'leaflet/dist/leaflet.css';
 import "leaflet-draw/dist/leaflet.draw.css";
 import { EditControl } from 'react-leaflet-draw';
 import 'leaflet-draw';
+
+import { useEffect, useState } from 'react';
+
+
+declare global {
+  interface Window { type: any; }
+}
+
 window.type = true;
-
-
 
 interface viewMaps  {
   centerObj: {lat: number, lng: number},
@@ -15,53 +21,64 @@ interface viewMaps  {
 }
 
 
-
 export const Maps: React.FC = () => {
+  const [rectangles, setRectangles] = useState<string>();
+  const opassURL = 'https://overpass-api.de/api/interpreter';
+
+    const viewMaps : viewMaps = {
+      centerObj: {lat: -6.90208974723932, lng: 107.61861026284961},
+      zoom: 17,
+      scrollWheelZoom: true,
+      zoomControl: true
+    }
   
     const onCreated = (e: any): void => {
-      let type = e.layerType;
       let layer = e.layer;
-      if (type === "marker") {
-        // Do marker specific actions
-        console.log("_onCreated: marker created", e);
-      } else {
-        console.log("_onCreated: something else created:", type, e);
-      }
+      const bounds = layer.getBounds();
+      const rectangleQuery = 
+      `
+        [out:json];
+        (
+           node(${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng})["amenity"="restaurant"];
+           way(${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng})["building"="house"];
+        );
+        (._;>;);
+        out;
+     `;
 
-      console.log("Geojson", layer.toGeoJSON());
-      console.log("coords", layer.getLatLngs());
-      // Do whatever else you need to. (save to db; etc)
-      // this._onChange();
+     setRectangles(rectangleQuery);
     };
 
-    const onEdited = function(e: any): void{
-      let numEdited = 0;
-      e.Layer.eachLayer(() => {
-        numEdited += 1;
-      });
-      console.log(`_onEdited: edited ${numEdited} layers`, e);
-  
-      // this._onChange();
-     ;
+    const onEdited = (e: any): void=>{
+      console.log(e);
     }
 
     const onDeleted = (e: any): void => {
-      let numDeleted = 0;
-      e.layers.eachLayer(() => {
-        numDeleted += 1;
-      });
-      console.log(`onDeleted: removed ${numDeleted} layers`, e);
-  
-      // this._onChange();
+      console.log(e)
     };
 
-  const viewMaps : viewMaps = {
-    centerObj: {lat: -6.90208974723932, lng: 107.61861026284961},
-    zoom: 17,
-    scrollWheelZoom: true,
-    zoomControl: true
-  }
+    useEffect(()=> {
+      // fetching data from overpass turbo 
+      const fetchingData = async (opURL:any) => {
+       await fetch(opassURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams(({data: opURL}))
+        }).then(res=>res.json())
+        .then(data=>{
+          const dataFetched = data.elements.map((eachData:any)=>{
+            return eachData.tags
+          })
+          console.log(dataFetched);
+        })
+        .catch((error)=>console.log(error))
+      }
 
+      fetchingData(rectangles);
+
+    },[rectangles])
 
   return (
   <>
@@ -73,6 +90,7 @@ export const Maps: React.FC = () => {
       onCreated={onCreated}
                   draw={
                     {
+                    rectangle: true,
                     polygon: false,
                     circle: false,
                     circlemarker: false,
@@ -88,6 +106,7 @@ export const Maps: React.FC = () => {
       <Marker position={viewMaps.centerObj}>
           <Popup>
             A pretty CSS3 popup. <br /> Easily customizable.
+            {JSON.stringify(rectangles)}
           </Popup>
         </Marker>
     

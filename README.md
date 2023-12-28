@@ -1,30 +1,23 @@
-# React + TypeScript + Vite
+# Dashboard: Estimated value of damage caused by natural disasters
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Description
 
-Currently, two official plugins are available:
+This dashboard serves the function of calculating
+and estimating the lost value of a damage caused by natural disasters.
+It takes houses, building, and road into the parameter of calculation.
+To makes sure, there is a limitation in acquiring data.
+Therefore, the scale of Area of Interest (AOI) should be adjusted
+for big cities will be small while for rural area could be larger as there
+are less data.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Technology
 
-## Expanding the ESLint configuration
+The main technology use for this dashboard as follows:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. Leaflet
+2. GeoServer
+3. PostgreSQL
+4. Node JS / Express
+5. Google Earth Engine
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Visualization of the web apps
