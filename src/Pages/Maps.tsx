@@ -1,9 +1,8 @@
-import { MapContainer, TileLayer, Marker, Popup, FeatureGroup} from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, FeatureGroup, GeoJSON} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import "leaflet-draw/dist/leaflet.draw.css";
 import { EditControl } from 'react-leaflet-draw';
 import 'leaflet-draw';
-
 import { useEffect, useState } from 'react';
 
 
@@ -23,11 +22,32 @@ interface viewMaps  {
 
 export const Maps: React.FC = () => {
   const [rectangles, setRectangles] = useState<string>();
-  const opassURL = 'https://overpass-api.de/api/interpreter';
+  const [dataAcquired, setDataAcquired] = useState<any[]>([]);
+  const [polygonAcq, setPolygonAcq] = useState<any>({
+    "type":"FeatureCollection","features":[]
+  })
+
+  const opassURL = 'https://overpass-api.de/api/interpreter?data=';
+  
+    const setColor = () => {
+      return { 
+        weight: 5,
+        fillColor: 'blue',
+        fillOpacity: 1,
+        color: 'red'
+      };
+    };
+
+    const BuildingPops = (feature:any, layer:any)=>{
+      layer.bindPopup("name:" + (feature.properties.building)
+      , {permanent: true, 
+          direction: "left"});
+  }
+    
 
     const viewMaps : viewMaps = {
-      centerObj: {lat: -6.90208974723932, lng: 107.61861026284961},
-      zoom: 17,
+      centerObj: {lat: 34.124869, lng: -85.431413},
+      zoom: 4,
       scrollWheelZoom: true,
       zoomControl: true
     }
@@ -40,10 +60,10 @@ export const Maps: React.FC = () => {
         [out:json];
         (
            node(${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng})["amenity"="restaurant"];
-           way(${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng})["building"="house"];
+           way["building"~""](${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng});
         );
         (._;>;);
-        out;
+        out geom;
      `;
 
      setRectangles(rectangleQuery);
@@ -67,18 +87,44 @@ export const Maps: React.FC = () => {
           },
           body: new URLSearchParams(({data: opURL}))
         }).then(res=>res.json())
-        .then(data=>{
+        .then((data)=>{
           const dataFetched = data.elements.map((eachData:any)=>{
-            return eachData.tags
+            if(eachData.type === 'node'){
+              return eachData
+            }
+          });
+          const wayOnly = data.elements.filter((data:any)=>{
+            if (data.type === 'way'){
+              return true;
+            }
+            return false;
           })
-          console.log(dataFetched);
+          const wayFetched = wayOnly.map((eachData:any)=>{
+            if(eachData.type === 'way'){
+                const coordinates = eachData.geometry.map((coord:any) => 
+                  ([coord.lon, coord.lat])
+              )
+              return {
+                type: "Feature",
+                id: `${eachData.id}`,
+                properties: eachData.tags,
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [coordinates]
+                }
+              }
+            }
+          })
+          // setDataAcquired((prevData)=> [...prevData, ...dataFetched]);
+          setPolygonAcq({...polygonAcq, features: wayFetched});
+
         })
         .catch((error)=>console.log(error))
       }
 
       fetchingData(rectangles);
 
-    },[rectangles])
+    },[rectangles, polygonAcq])
 
   return (
   <>
@@ -103,14 +149,29 @@ export const Maps: React.FC = () => {
             attribution='false'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-      <Marker position={viewMaps.centerObj}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-            {JSON.stringify(rectangles)}
-          </Popup>
-        </Marker>
-    
+      {dataAcquired !== null ? (
+        dataAcquired.map((data:any)=>{
+          return (
+          <Marker key={data.id} position={[data.lat,data.lon]}>
+            <Popup>
+              Name: {data.tags.name} <br/>
+              Amenity: {data.tags.amenity}
+            </Popup>
+          </Marker>
+          )
+        })
+      ): ""}
+
+
+    {Object.keys(polygonAcq.features).length !== 0 ? (
+        <GeoJSON data={polygonAcq} style={setColor} onEachFeature={BuildingPops}/>
+      ): ""}
+
     </MapContainer>
+
+    <div>
+      Hasil bro: {JSON.stringify(polygonAcq)}
+    </div>
 
 </>
   )
