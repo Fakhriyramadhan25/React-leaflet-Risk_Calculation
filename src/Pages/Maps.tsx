@@ -4,6 +4,8 @@ import "leaflet-draw/dist/leaflet.draw.css";
 import { EditControl } from 'react-leaflet-draw';
 import 'leaflet-draw';
 import { useEffect, useState } from 'react';
+import { VscClearAll } from "react-icons/vsc";
+import AttQuery from '../Components/AttQuery';
 
 
 declare global {
@@ -49,7 +51,7 @@ export const Maps: React.FC = () => {
       centerObj: {lat: 34.124869, lng: -85.431413},
       zoom: 4,
       scrollWheelZoom: true,
-      zoomControl: true
+      zoomControl: false
     }
   
     const onCreated = (e: any): void => {
@@ -126,11 +128,30 @@ export const Maps: React.FC = () => {
 
     },[rectangles, polygonAcq])
 
+
+
   return (
   <>
-    <MapContainer zoom={viewMaps.zoom} center={viewMaps.centerObj} scrollWheelZoom={viewMaps.scrollWheelZoom} zoomControl={viewMaps.zoomControl} >
+    
+    <div className='z-20'>
+      <button className='bg-white p-2 rounded-lg z-20 absolute left-5 top-44 hover:bg-sky-300'><VscClearAll size={26}/></button>
+    </div>
+
+    <div className='z-20'>
+      <AttQuery 
+      modalAcc='Run'
+      >
+        Imagery Satellite Query
+      </AttQuery>
+    </div>
+
+
+    <div className='z-0'>
+    {/* <div className='h-full w-20 bg-blue-100 absolute left-0 z-10'></div> */}
+    <MapContainer zoom={viewMaps.zoom} center={viewMaps.centerObj} scrollWheelZoom={viewMaps.scrollWheelZoom} zoomControl={viewMaps.zoomControl} className='z-0'>
+    
     <FeatureGroup>
-      <EditControl position="topright" 
+      <EditControl position="topleft" 
       onEdited={onEdited}
       onDeleted={onDeleted}
       onCreated={onCreated}
@@ -145,6 +166,7 @@ export const Maps: React.FC = () => {
                     }
                   }/>
     </FeatureGroup>
+
     <TileLayer
             attribution='false'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -168,13 +190,27 @@ export const Maps: React.FC = () => {
       ): ""}
 
     </MapContainer>
-
-    <div>
-      Hasil bro: {JSON.stringify(polygonAcq)}
     </div>
-
 </>
   )
 }
+
+
+// {
+//   icon: new L.DivIcon({
+//   iconSize: new L.Point(16, 16),
+//   className: 'leaflet-draw-draw-polygon'
+// }),
+// allowIntersection: false,
+// drawError: {
+//   color: '#5878B8',
+//   message: '<strong>Oh snap!<strong> you can\'t draw that!' 
+// },
+// shapeOptions: {
+//   guidelineDistance: 10,
+//   color: "red",
+//   weight: 3
+// }
+// },
 
 export default Maps

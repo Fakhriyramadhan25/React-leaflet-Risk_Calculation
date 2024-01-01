@@ -1,7 +1,26 @@
-.leaflet-tooltip.my-labels {
-    background-color: transparent;
-    border: transparent;
-    box-shadow: none;
-    color: black;
-    font-size: medium;
-    }
+.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-rectangle:hover{
+    z-index: 20;
+    background-color: rgb(125 211 252);
+}
+
+.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-edit:hover{
+    z-index: 20;
+    background-color: rgb(125 211 252);
+}
+
+
+.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-remove:hover{
+    z-index: 20;
+    background-color: rgb(125 211 252);
+}
+
+
+.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-edit.leaflet-disabled:hover{
+    z-index: 20;
+    background-color: rgb(125 211 252);
+}
+
+.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-remove.leaflet-disabled:hover{
+    z-index: 20;
+    background-color: rgb(125 211 252);
+}
