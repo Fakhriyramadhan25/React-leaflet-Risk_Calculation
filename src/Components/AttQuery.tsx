@@ -17,7 +17,7 @@ function AttQuery({
   children: string;
 }) {
 
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>();
 
   const imageForm : imageForm = {
     imageName: "",
@@ -119,7 +119,7 @@ function AttQuery({
 
 
                 {/*footer*/}
-                <div className="flex items-center justify-start p-6 border-t border-solid border-blueGray-200 rounded-b">
+                <div className="flex items-center justify-start p-6 border-t border-solid border-blueGray-200">
                   <button
                     className="bg-sky-500 text-white font-bold uppercase rounded-lg px-3 py-2 text-sm hover:bg-blue-500"
                     type="button"

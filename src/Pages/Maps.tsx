@@ -1,12 +1,14 @@
-import { MapContainer, TileLayer, Marker, Popup, FeatureGroup, GeoJSON} from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, FeatureGroup, GeoJSON, LayersControl} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import "leaflet-draw/dist/leaflet.draw.css";
 import { EditControl } from 'react-leaflet-draw';
 import 'leaflet-draw';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { VscClearAll } from "react-icons/vsc";
 import AttQuery from '../Components/AttQuery';
-
+import $ from 'jquery';
+import { SlLayers } from "react-icons/sl";
+import QueryResult from '../Components/QueryResult';
 
 declare global {
   interface Window { type: any; }
@@ -28,6 +30,7 @@ export const Maps: React.FC = () => {
   const [polygonAcq, setPolygonAcq] = useState<any>({
     "type":"FeatureCollection","features":[]
   })
+  const [layerSwitcher, setLayerSwitcher] = useState<boolean>(true);
 
   const opassURL = 'https://overpass-api.de/api/interpreter?data=';
   
@@ -126,8 +129,22 @@ export const Maps: React.FC = () => {
 
       fetchingData(rectangles);
 
+      $('.leaflet-control-layers').hide();
+
     },[rectangles, polygonAcq])
 
+    const handleHide = useCallback(() => {
+      setLayerSwitcher(!layerSwitcher)
+      if(layerSwitcher === false) {
+        $('.leaflet-control-layers').hide();
+      }
+      else {
+       $('.leaflet-control-layers').toggle();
+       $('.leaflet-control-layers').css('top','25px');
+       $('.leaflet-control-layers').css('right','62px');
+      }
+
+    },[layerSwitcher])
 
 
   return (
@@ -144,11 +161,15 @@ export const Maps: React.FC = () => {
         Imagery Satellite Query
       </AttQuery>
     </div>
+    
+    <div className='z-20 absolute right-8 top-4'><button className='bg-white font-bold p-2 rounded-xl hover:bg-sky-300' onClick={handleHide}>
+      <SlLayers size={25}/>
+      </button>
+      <QueryResult/>
+    </div>
 
-
-    <div className='z-0'>
-    {/* <div className='h-full w-20 bg-blue-100 absolute left-0 z-10'></div> */}
-    <MapContainer zoom={viewMaps.zoom} center={viewMaps.centerObj} scrollWheelZoom={viewMaps.scrollWheelZoom} zoomControl={viewMaps.zoomControl} className='z-0'>
+    <div>
+    <MapContainer zoom={viewMaps.zoom} center={viewMaps.centerObj} scrollWheelZoom={viewMaps.scrollWheelZoom} zoomControl={viewMaps.zoomControl}>
     
     <FeatureGroup>
       <EditControl position="topleft" 
@@ -157,7 +178,13 @@ export const Maps: React.FC = () => {
       onCreated={onCreated}
                   draw={
                     {
-                    rectangle: true,
+                    rectangle: 
+                    {
+                    shapeOptions: {
+                      color: "red",
+                      weight: 3
+                    }
+                    },
                     polygon: false,
                     circle: false,
                     circlemarker: false,
@@ -167,10 +194,40 @@ export const Maps: React.FC = () => {
                   }/>
     </FeatureGroup>
 
-    <TileLayer
+    <LayersControl position='topright' collapsed={false}>
+      
+      <LayersControl.BaseLayer checked name="OpenStreet Basemap">
+      <TileLayer
+              attribution='false'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+      </LayersControl.BaseLayer>
+      
+      <LayersControl.BaseLayer name="Carto Basemap">
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             attribution='false'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+          />
+        </LayersControl.BaseLayer>
+
+      
+        <LayersControl.BaseLayer name="Imagery Satellite">
+          <TileLayer
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            attribution='false'
+          />
+        </LayersControl.BaseLayer>
+
+
+      <LayersControl.Overlay name="marker" checked>
+        <Marker position={viewMaps.centerObj}>
+            <Popup>
+              A pretty CSS3 popup. <br /> Easily customizable.
+            </Popup>
+          </Marker>
+      </LayersControl.Overlay>
+      
+      <LayersControl.Overlay name="Restaurants" checked>
       {dataAcquired !== null ? (
         dataAcquired.map((data:any)=>{
           return (
@@ -183,34 +240,20 @@ export const Maps: React.FC = () => {
           )
         })
       ): ""}
+      </LayersControl.Overlay>
 
-
+    <LayersControl.Overlay name="Buildings" checked> 
     {Object.keys(polygonAcq.features).length !== 0 ? (
         <GeoJSON data={polygonAcq} style={setColor} onEachFeature={BuildingPops}/>
       ): ""}
+    </LayersControl.Overlay>
 
+      </LayersControl>
+      
     </MapContainer>
     </div>
 </>
   )
 }
-
-
-// {
-//   icon: new L.DivIcon({
-//   iconSize: new L.Point(16, 16),
-//   className: 'leaflet-draw-draw-polygon'
-// }),
-// allowIntersection: false,
-// drawError: {
-//   color: '#5878B8',
-//   message: '<strong>Oh snap!<strong> you can\'t draw that!' 
-// },
-// shapeOptions: {
-//   guidelineDistance: 10,
-//   color: "red",
-//   weight: 3
-// }
-// },
 
 export default Maps
