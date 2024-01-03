@@ -48,11 +48,10 @@ export const Maps: React.FC = () => {
       , {permanent: true, 
           direction: "left"});
   }
-    
 
     const viewMaps : viewMaps = {
-      centerObj: {lat: 34.124869, lng: -85.431413},
-      zoom: 4,
+      centerObj: {lat:48.824592829935014 , lng: 9.261474609375002},
+      zoom: 10,
       scrollWheelZoom: true,
       zoomControl: false
     }
@@ -129,8 +128,6 @@ export const Maps: React.FC = () => {
 
       fetchingData(rectangles);
 
-      $('.leaflet-control-layers').hide();
-
     },[rectangles, polygonAcq])
 
     const handleHide = useCallback(() => {
@@ -164,8 +161,9 @@ export const Maps: React.FC = () => {
     
     <div className='z-20 absolute right-8 top-4'><button className='bg-white font-bold p-2 rounded-xl hover:bg-sky-300' onClick={handleHide}>
       <SlLayers size={25}/>
+     
       </button>
-      <QueryResult/>
+   
     </div>
 
     <div>
@@ -194,6 +192,7 @@ export const Maps: React.FC = () => {
                   }/>
     </FeatureGroup>
 
+    
     <LayersControl position='topright' collapsed={false}>
       
       <LayersControl.BaseLayer checked name="OpenStreet Basemap">
@@ -201,6 +200,12 @@ export const Maps: React.FC = () => {
               attribution='false'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
+
+      <LayersControl.Overlay name="GEE" checked>
+          <QueryResult/>
+      </LayersControl.Overlay>
+
+      
       </LayersControl.BaseLayer>
       
       <LayersControl.BaseLayer name="Carto Basemap">
@@ -227,6 +232,14 @@ export const Maps: React.FC = () => {
           </Marker>
       </LayersControl.Overlay>
       
+      <LayersControl.Overlay name="bad luck" checked>
+        <Marker position={[48.7 , 9.25]}>
+            <Popup>
+              A pretty CSS3 popup. <br /> Easily customizable.
+            </Popup>
+          </Marker>
+      </LayersControl.Overlay>
+
       <LayersControl.Overlay name="Restaurants" checked>
       {dataAcquired !== null ? (
         dataAcquired.map((data:any)=>{

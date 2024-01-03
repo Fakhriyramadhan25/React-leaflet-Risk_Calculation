@@ -57,17 +57,12 @@ app.post('/GEE', cors(), (req, res)=>{
     const AOI = ee.Geometry.Polygon(
         [
             [9.261474609375002, 48.824592829935014], 
-            // #East North
             [9.261474609375002, 48.75217601689752],
-            // #East South
             [9.151611328125002, 48.75217601689752], 
-            // #West South
-            [9.151611328125002, 48.824592829935014] 
-            // #West North
-        ]
-    )
+            [9.151611328125002, 48.824592829935014]
+        ])
 
-    const imageRaw = ee.ImageCollection('LANDSAT/LC8_L1T');
+    const imageRaw = ee.ImageCollection('LANDSAT/LC8_L1T_TOA');
     const imageQuery = imageRaw.filterBounds(AOI).filterDate('2015-12-01', '2015-12-31')
     .sort('CLOUD_COVER').first();
 
@@ -80,7 +75,9 @@ app.post('/GEE', cors(), (req, res)=>{
 
     const eeImage = ee.Image(imageQuery);
     const mapInfo = eeImage.getMapId(visualParams);
-    const urlData = ee.data.getTileUrl(mapInfo);
+    // const urldata = {
+    //     'url': mapInfo.urlFormat
+    // }
 
     // try{
     //     const eeImage = ee.Image(imageQuery);
@@ -96,6 +93,6 @@ app.post('/GEE', cors(), (req, res)=>{
     //     }
     // }
 
-    res.status(200).json(mapInfo);
+    res.status(200).json(mapInfo.urlFormat);
 
 })

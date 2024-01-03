@@ -13,6 +13,8 @@ dist-ssr
 *.local
 .env
 key
+index.html
+pythonFlask
 
 # Editor directories and files
 .vscode/*
