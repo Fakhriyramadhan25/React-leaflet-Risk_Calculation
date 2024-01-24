@@ -14,7 +14,7 @@
     background-color: rgb(125 211 252);
 }
 
-
+/* 
 .leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-edit.leaflet-disabled:hover{
     z-index: 20;
     background-color: rgb(125 211 252);
@@ -24,7 +24,7 @@
     z-index: 20;
     background-color: rgb(125 211 252);
 }
-
+ */
 
 .leaflet-control-layers{
     display: none;

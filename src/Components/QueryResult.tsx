@@ -24,7 +24,7 @@ function QueryResult() {
             });
           }
 
-          fetchingData();
+          // fetchingData();
     },[test])
 
   return (

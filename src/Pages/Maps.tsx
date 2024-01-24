@@ -3,12 +3,16 @@ import 'leaflet/dist/leaflet.css';
 import "leaflet-draw/dist/leaflet.draw.css";
 import { EditControl } from 'react-leaflet-draw';
 import 'leaflet-draw';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo} from 'react';
 import { VscClearAll } from "react-icons/vsc";
 import AttQuery from '../Components/AttQuery';
 import $ from 'jquery';
 import { SlLayers } from "react-icons/sl";
 import QueryResult from '../Components/QueryResult';
+
+// map features 
+import { GetLatLong } from '../Components/GetLatLong';
+import SearchBar from '../Components/SearchBar';
 
 declare global {
   interface Window { type: any; }
@@ -64,7 +68,7 @@ export const Maps: React.FC = () => {
         [out:json];
         (
            node(${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng})["amenity"="restaurant"];
-           way["building"~""](${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng});
+           
         );
         (._;>;);
         out geom;
@@ -119,14 +123,15 @@ export const Maps: React.FC = () => {
               }
             }
           })
-          // setDataAcquired((prevData)=> [...prevData, ...dataFetched]);
-          setPolygonAcq({...polygonAcq, features: wayFetched});
-
+          // setRectangles("");
+          setDataAcquired((prevData)=> [...prevData, ...dataFetched]);
+          // setPolygonAcq({...polygonAcq, features: wayFetched});
         })
         .catch((error)=>console.log(error))
       }
 
       fetchingData(rectangles);
+      
 
     },[rectangles, polygonAcq])
 
@@ -143,15 +148,29 @@ export const Maps: React.FC = () => {
 
     },[layerSwitcher])
 
+    // calculating result 
+    const CountPoints = useMemo(()=>{
+      const Restaurant = dataAcquired.length + 1 ;
+      const Residence = polygonAcq.length + 1 ;
+
+      return [Restaurant, Residence];
+    },[dataAcquired, polygonAcq])
+
+    const handleClearAll = () => {
+      setDataAcquired([]);
+      setPolygonAcq([]);
+      setRectangles("");
+    }
+  
 
   return (
   <>
     
-    <div className='z-20'>
-      <button className='bg-white p-2 rounded-lg z-20 absolute left-5 top-44 hover:bg-sky-300'><VscClearAll size={26}/></button>
+    <div className='z-10'>
+      <button className='bg-white p-2 rounded-lg z-20 absolute left-5 top-72 hover:bg-sky-300' onClick={handleClearAll}><VscClearAll size={26}/></button>
     </div>
 
-    <div className='z-20'>
+    <div className='z-10'>
       <AttQuery 
       modalAcc='Run'
       >
@@ -159,16 +178,14 @@ export const Maps: React.FC = () => {
       </AttQuery>
     </div>
     
-    <div className='z-20 absolute right-8 top-4'><button className='bg-white font-bold p-2 rounded-xl hover:bg-sky-300' onClick={handleHide}>
+    <div className='z-10 absolute right-8 top-4'><button className='bg-white font-bold p-2 rounded-xl hover:bg-sky-300' onClick={handleHide}>
       <SlLayers size={25}/>
-     
       </button>
-   
     </div>
 
-    <div>
     <MapContainer zoom={viewMaps.zoom} center={viewMaps.centerObj} scrollWheelZoom={viewMaps.scrollWheelZoom} zoomControl={viewMaps.zoomControl}>
-    
+    {/* <GetLatLong/> */}
+    <SearchBar/>
     <FeatureGroup>
       <EditControl position="topleft" 
       onEdited={onEdited}
@@ -200,12 +217,6 @@ export const Maps: React.FC = () => {
               attribution='false'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-
-      <LayersControl.Overlay name="GEE" checked>
-          <QueryResult/>
-      </LayersControl.Overlay>
-
-      
       </LayersControl.BaseLayer>
       
       <LayersControl.BaseLayer name="Carto Basemap">
@@ -223,17 +234,13 @@ export const Maps: React.FC = () => {
           />
         </LayersControl.BaseLayer>
 
+        <LayersControl.Overlay name="GEE" checked>
+          <QueryResult/>
+      </LayersControl.Overlay>
+
 
       <LayersControl.Overlay name="marker" checked>
         <Marker position={viewMaps.centerObj}>
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
-          </Marker>
-      </LayersControl.Overlay>
-      
-      <LayersControl.Overlay name="bad luck" checked>
-        <Marker position={[48.7 , 9.25]}>
             <Popup>
               A pretty CSS3 popup. <br /> Easily customizable.
             </Popup>
@@ -264,7 +271,7 @@ export const Maps: React.FC = () => {
       </LayersControl>
       
     </MapContainer>
-    </div>
+
 </>
   )
 }

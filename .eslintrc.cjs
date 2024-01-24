@@ -12,7 +12,9 @@ module.exports = {
   rules: {
     'react-refresh/only-export-components': [
       'warn',
+      
       { allowConstantExport: true },
     ],
+    "@typescript-eslint/explicit-function-return-type": ["error", { "allowExpressions": true, }],
   },
 }

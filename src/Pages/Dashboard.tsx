@@ -1,8 +1,16 @@
-import React from 'react'
+import { useState } from "react";
 
 function Dashboard() {
+
+  const [counting, setCounting] = useState<number>();
+
+
   return (
-    <div>Dashboard</div>
+    <>
+    <div>
+
+    </div>
+    </>
   )
 }
 

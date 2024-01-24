@@ -3,7 +3,8 @@ import { useReducer, useState } from "react";
 
 interface imageForm  {
   imageName: string,
-  imageDate: Date,
+  dateStart: Date,
+  dateEnd: Date,
   imageLat: number,
   imageLon: number
 }
@@ -21,7 +22,8 @@ function AttQuery({
 
   const imageForm : imageForm = {
     imageName: "",
-    imageDate: new Date("2024-01-01"),
+    dateStart: new Date("2024-01-01"),
+    dateEnd: new Date("2024-01-01"),
     imageLat: 0,
     imageLon: 0
   }
@@ -52,7 +54,7 @@ function AttQuery({
   return (
     <>
       {/* <!-- Modal toggle --> */}
-        <button className="bg-white p-2 rounded-lg z-20 absolute left-5 top-44 hover:bg-sky-300"
+        <button className="bg-white p-2 rounded-lg z-20 absolute left-5 top-56 hover:bg-sky-300"
         onClick={() => setShowModal(true)}
       >
         <TbMapSearch size={26}/>
@@ -89,15 +91,26 @@ function AttQuery({
                       <label className="block text-gray-700 text-sm font-bold mb-2">
                         Image Name
                       </label>
-                      <input className="rounded border-2 w-full py-2 px-3 text-black" type="text"
-                      name="imageName" value={state.imageName} onChange={(e)=>addOperator(e)}/>
+                      <select className="rounded border-2 w-full py-2 px-3 text-black" name="imageName"
+                        onChange={(e)=>addOperator(e)}>
+                          <option value="" disabled selected>Select Image</option>
+                          <option value="LANDSAT/LC8_L1T_TOA">Landsat 8</option>
+                          <option value="LANDSAT/LC09/C02/T1_TOA">Landsat 9</option>
+                      </select>
                     </div>
                     <div className="mb-4">
                       <label className="block text-gray-700 text-sm font-bold mb-2">
-                        Date Image
+                        Date Start
                       </label>
                       <input className="rounded border-2 w-full py-2 px-3 text-black" type="date"
-                      name="imageDate" value={state.imageDate} onChange={(e)=>addOperator(e)}/>
+                      name="dateStart" value={state.dateStart} onChange={(e)=>addOperator(e)}/>
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-gray-700 text-sm font-bold mb-2">
+                        Date End
+                      </label>
+                      <input className="rounded border-2 w-full py-2 px-3 text-black" type="date"
+                      name="dateEnd" value={state.dateEnd} onChange={(e)=>addOperator(e)}/>
                     </div>
                     <div className="mb-4">
                       <label className="block text-gray-700 text-sm font-bold mb-2">
