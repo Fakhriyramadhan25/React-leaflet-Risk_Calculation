@@ -23,3 +23,15 @@ venv
 *.njsproj
 *.sln
 *.sw?
+
+src/Pages/Dashboard.tsx
+
+.src/Pages/Dashboard.tsx
+
+./src/Pages/Dashboard.tsx
+
+Test.tsx
+./Test.tsx
+
+
+.env
