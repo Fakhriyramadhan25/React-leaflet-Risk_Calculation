@@ -5,7 +5,7 @@ const cors = require('cors');
 const privateKey = require('./key/privateKey.json');
 const ee = require('@google/earthengine');
 const db = require('./models/config.js');
-const geeController = require('./controllers/geeController.js');
+const GEE = require('./controllers/GeeControl.js');
 const PointController = require('./controllers/PointController.js');
 
 dotenv.config();
@@ -41,5 +41,6 @@ ee.data.authenticateViaPrivateKey(privateKey, ()=>{
 })
 
 
-app.use('/GEE', cors(), geeController);
+app.use('/GEE', GEE);
+
 // app.use('/Point',cors(), PointController);

@@ -1,12 +1,13 @@
 import { TbMapSearch } from "react-icons/tb";
 import { useReducer, useState } from "react";
 
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { update} from '../redux/counter'
+
 interface imageForm  {
   imageName: string,
   dateStart: Date,
   dateEnd: Date,
-  imageLat: number,
-  imageLon: number
 }
 
 
@@ -18,14 +19,15 @@ function AttQuery({
   children: string;
 }) {
 
+  const img = useAppSelector(state=>state.counter)
+  const useDispatch = useAppDispatch()
+
   const [showModal, setShowModal] = useState<boolean>();
 
   const imageForm : imageForm = {
     imageName: "",
-    dateStart: new Date("2024-01-01"),
-    dateEnd: new Date("2024-01-01"),
-    imageLat: 0,
-    imageLon: 0
+    dateStart: new Date("2015-12-01"),
+    dateEnd: new Date("2015-12-31"),
   }
   
   const queryReducer = (state:any,action:any) => {
@@ -49,6 +51,16 @@ function AttQuery({
       field: e.target.name,
       payload: e.target.value
     })
+  }
+
+  const handleImage = () => {
+    useDispatch(update(
+      {
+      imageName: state.imageName,
+      imageStart: String(state.dateStart), 
+      imageEnd: String(state.dateEnd)
+    }
+      ))
   }
 
   return (
@@ -112,20 +124,6 @@ function AttQuery({
                       <input className="rounded border-2 w-full py-2 px-3 text-black" type="date"
                       name="dateEnd" value={state.dateEnd} onChange={(e)=>addOperator(e)}/>
                     </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2">
-                        Latitude
-                      </label>
-                      <input className="rounded border-2 w-full py-2 px-3 text-black" type="number" step="0.001" 
-                      name="imageLat" value={state.imageLat} onChange={(e)=>addOperator(e)}/>
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2">
-                        Longitude
-                      </label>
-                      <input className="rounded border-2 w-full py-2 px-3 text-black" type="number" step="0.001" 
-                      name="imageLon" value={state.imageLon} onChange={(e)=>addOperator(e)}/>
-                    </div>
                   </form>
                 </div>
 
@@ -136,12 +134,13 @@ function AttQuery({
                   <button
                     className="bg-sky-500 text-white font-bold uppercase rounded-lg px-3 py-2 text-sm hover:bg-blue-500"
                     type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={handleImage}
                   >
                     {modalAcc}
                   </button>
                   <div className="ms-5">
                     <p>{JSON.stringify(state)}</p>
+                    <p>{img.imageName}, {img.imageStart}, {img.imageEnd}</p>
                   </div>
 
                 </div>

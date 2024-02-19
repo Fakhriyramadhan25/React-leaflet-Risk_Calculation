@@ -10,8 +10,9 @@ import $ from 'jquery';
 import { SlLayers } from "react-icons/sl";
 import QueryResult from '../Components/QueryResult';
 
+
 // map features 
-import { GetLatLong } from '../Components/GetLatLong';
+// import { GetLatLong } from '../Components/GetLatLong';
 import SearchBar from '../Components/SearchBar';
 
 declare global {
@@ -34,7 +35,11 @@ export const Maps: React.FC = () => {
   const [polygonAcq, setPolygonAcq] = useState<any>({
     "type":"FeatureCollection","features":[]
   })
+  const [boundAOI, setBoundAOI] = useState<any[]>([]);
   const [layerSwitcher, setLayerSwitcher] = useState<boolean>(true);
+  const [amenities, setAmenities]=useState<any[]>([]);
+  const [res, setResult] = useState<number>();
+  const[recWay, setRecWay] = useState<string>();
 
   const opassURL = 'https://overpass-api.de/api/interpreter?data=';
   
@@ -63,11 +68,19 @@ export const Maps: React.FC = () => {
     const onCreated = (e: any): void => {
       let layer = e.layer;
       const bounds = layer.getBounds();
+
+      const latlonpoint = layer.getLatLngs();
+      const latlong = latlonpoint[0].map((data:any)=>{
+        return [data.lng, data.lat]})
+
+        // ["amenity"="restaurant"]
+      
+      setBoundAOI(latlong);
       const rectangleQuery = 
       `
         [out:json];
         (
-           node(${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng})["amenity"="restaurant"];
+           node(${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng})["amenity"~"restaurant|cafe|bar|food_court"];
            
         );
         (._;>;);
@@ -75,7 +88,23 @@ export const Maps: React.FC = () => {
      `;
 
      setRectangles(rectangleQuery);
+
+     const recWayQuery = 
+     `
+     [out:json];
+        (
+     way(${bounds.getSouthWest().lat},${bounds.getSouthWest().lng},${bounds.getNorthEast().lat},${bounds.getNorthEast().lng})["building"~"house|residential"];
+     );
+     (._;>;);
+     out geom;
+     `;
+
+    
+     setRecWay(recWayQuery)
+
     };
+
+
 
     const onEdited = (e: any): void=>{
       console.log(e);
@@ -98,42 +127,72 @@ export const Maps: React.FC = () => {
         .then((data)=>{
           const dataFetched = data.elements.map((eachData:any)=>{
             if(eachData.type === 'node'){
+              setAmenities((prevData:any)=> [...prevData, eachData.tags.amenity]);
               return eachData
             }
           });
-          const wayOnly = data.elements.filter((data:any)=>{
-            if (data.type === 'way'){
-              return true;
-            }
-            return false;
-          })
-          const wayFetched = wayOnly.map((eachData:any)=>{
-            if(eachData.type === 'way'){
-                const coordinates = eachData.geometry.map((coord:any) => 
-                  ([coord.lon, coord.lat])
-              )
-              return {
-                type: "Feature",
-                id: `${eachData.id}`,
-                properties: eachData.tags,
-                geometry: {
-                  type: "Polygon",
-                  coordinates: [coordinates]
-                }
-              }
-            }
-          })
-          // setRectangles("");
+
           setDataAcquired((prevData)=> [...prevData, ...dataFetched]);
-          // setPolygonAcq({...polygonAcq, features: wayFetched});
         })
         .catch((error)=>console.log(error))
       }
 
-      fetchingData(rectangles);
+      // fetchingData(rectangles);
       
 
-    },[rectangles, polygonAcq])
+    },[rectangles])
+
+
+    useEffect(()=>{
+         // fetching data from overpass turbo 
+         const fetchingWay = async (opURL:any) => {
+          await fetch(opassURL, {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/x-www-form-urlencoded',
+             },
+             body: new URLSearchParams(({data: opURL}))
+           }).then(res=>res.json())
+           .then((data)=>{
+             const wayOnly = data.elements.filter((data:any)=>{
+               if (data.type === 'way'){
+                 return true;
+               }
+               return false;
+             })
+             const wayFetched = wayOnly.map((eachData:any)=>{
+               if(eachData.type === 'way'){
+                   const coordinates = eachData.geometry.map((coord:any) => 
+                     ([coord.lon, coord.lat])
+                 )
+                 return {
+                   type: "Feature",
+                   id: `${eachData.id}`,
+                   properties: eachData.tags,
+                   geometry: {
+                     type: "Polygon",
+                     coordinates: [coordinates]
+                   }
+                 }
+               }
+             })
+   
+             setPolygonAcq({...polygonAcq, features: wayFetched});
+
+             setPolygonAcq((prevState:any) => ({
+              ...prevState,
+              features: [...prevState.features, ...wayFetched]
+            }));
+
+            console.log(wayFetched);
+ 
+           })
+           .catch((error)=>console.log(error))
+         }
+   
+        // fetchingWay(recWay);
+
+    },[recWay])
 
     const handleHide = useCallback(() => {
       setLayerSwitcher(!layerSwitcher)
@@ -148,20 +207,39 @@ export const Maps: React.FC = () => {
 
     },[layerSwitcher])
 
+    useEffect(()=>{
+      
+    })
+
+    useEffect(()=>{
+      let result = 0;
+      for(let i = 0; i<amenities.length;i++){
+        amenities[i] = amenities[i].toLowerCase();
+        if(amenities[i] == 'restaurant'){
+          result += 1;
+        }
+      }
+      setResult(result);
+    },[amenities])
+
     // calculating result 
     const CountPoints = useMemo(()=>{
-      const Restaurant = dataAcquired.length + 1 ;
-      const Residence = polygonAcq.length + 1 ;
+      const Restaurant = dataAcquired.length;
+      const building = polygonAcq.features.length;
+      return [Restaurant,building];
+    },[dataAcquired, amenities, polygonAcq])
 
-      return [Restaurant, Residence];
-    },[dataAcquired, polygonAcq])
+
 
     const handleClearAll = () => {
       setDataAcquired([]);
-      setPolygonAcq([]);
-      setRectangles("");
+      setAmenities([]);
+      // setPolygonAcq([""]);
+      // setRectangles("");
     }
-  
+
+
+
 
   return (
   <>
@@ -176,6 +254,16 @@ export const Maps: React.FC = () => {
       >
         Imagery Satellite Query
       </AttQuery>
+    </div>
+
+    <div className='z-10'>
+      count: {JSON.stringify(CountPoints)} {res}
+      amenities: {JSON.stringify(amenities)}
+      {polygonAcq && JSON.stringify(polygonAcq)}
+    </div>
+
+    <div className='z-10'>
+    <QueryResult bounds={boundAOI}/>
     </div>
     
     <div className='z-10 absolute right-8 top-4'><button className='bg-white font-bold p-2 rounded-xl hover:bg-sky-300' onClick={handleHide}>
@@ -209,6 +297,19 @@ export const Maps: React.FC = () => {
                   }/>
     </FeatureGroup>
 
+    {dataAcquired !== null ? (
+        dataAcquired.map((data:any)=>{
+          return (
+          <Marker key={data.id} position={[data.lat,data.lon]}>
+            <Popup>
+              Name: {data.tags.name} <br/>
+              Amenity: {data.tags.amenity}
+            </Popup>
+          </Marker>
+          )
+        })
+      ): ""}
+
     
     <LayersControl position='topright' collapsed={false}>
       
@@ -234,9 +335,9 @@ export const Maps: React.FC = () => {
           />
         </LayersControl.BaseLayer>
 
-        <LayersControl.Overlay name="GEE" checked>
-          <QueryResult/>
-      </LayersControl.Overlay>
+        {/* <LayersControl.Overlay name="GEE" checked>
+          <QueryResult bounds={boundAOI}/>
+      </LayersControl.Overlay> */}
 
 
       <LayersControl.Overlay name="marker" checked>
@@ -247,24 +348,17 @@ export const Maps: React.FC = () => {
           </Marker>
       </LayersControl.Overlay>
 
-      <LayersControl.Overlay name="Restaurants" checked>
-      {dataAcquired !== null ? (
-        dataAcquired.map((data:any)=>{
-          return (
-          <Marker key={data.id} position={[data.lat,data.lon]}>
-            <Popup>
-              Name: {data.tags.name} <br/>
-              Amenity: {data.tags.amenity}
-            </Popup>
-          </Marker>
-          )
-        })
-      ): ""}
-      </LayersControl.Overlay>
+      {/* <LayersControl.Overlay name="Restaurants" checked>
+      
+      </LayersControl.Overlay> */}
 
     <LayersControl.Overlay name="Buildings" checked> 
-    {Object.keys(polygonAcq.features).length !== 0 ? (
-        <GeoJSON data={polygonAcq} style={setColor} onEachFeature={BuildingPops}/>
+
+    {polygonAcq.features && Object.keys(polygonAcq.features).length !== 0 ? ( 
+      polygonAcq.features.map((data:any) => {
+      return (<GeoJSON data={data} style={setColor} onEachFeature={BuildingPops}/> )
+    })
+        
       ): ""}
     </LayersControl.Overlay>
 
