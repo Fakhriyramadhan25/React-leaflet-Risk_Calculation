@@ -26,6 +26,19 @@ function SearchBar() {
           searchLabel: 'Enter address', // optional: string      - default 'Enter address'
           keepResult: false, // optional: true|false  - default false
           updateMap: true, // optional: true|false  - default true
+        //   style: 'bar',
+          maximumResponses: 3,
+          position: 'topright',
+          classNames: {
+            container: 'custom-container',
+            form: 'formSearch',
+            // button: 'buttonSearch',
+            resultlist: 'msgboxSearch',
+            input: 'inputSearch',
+            item: 'itemSearch',
+            // notfound: 'buttonSearch',
+            resetButton: 'buttonSearch'
+        }
     });
 
     const map = useMap();

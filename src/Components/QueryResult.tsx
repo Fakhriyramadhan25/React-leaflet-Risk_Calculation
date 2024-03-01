@@ -14,7 +14,7 @@ interface imgParam {
 
 
 function QueryResult(props:any) {
-    const [queryRes, setQueryRes] = useState<string>('');
+    const [queryRes, setQueryRes] = useState<string[]>([]);
     const [ imgParam, setImgParam ] = useState<imgParam>({
       imageName: 'LANDSAT/LC8_L1T_TOA',
       imageStart:'2015-12-01', 
@@ -77,35 +77,40 @@ function QueryResult(props:any) {
           })
             .then((response) => response.json())
             .then((mapid) => {
-              setQueryRes(mapid.url);
+              setQueryRes((prev:string[])=>[...prev, mapid.url]);
               console.log(mapid);
             }).catch(err=>{console.log(err)});
             
           }
+
+          if(props.ActivateIS && props.ActivateIS === true){
+            fetchingData();
+          }
           
-          // fetchingData();
+          
     },[ img, props.bounds ])
 
   return (
     <>
-    <div>
+    {/* <div>
       <p>bound: {JSON.stringify(iBounds)}</p>
       <p>image details: {JSON.stringify(img)}</p>
       <p>fetch result {JSON.stringify(queryRes)}</p>
-    </div>
+    </div> */}
 
 {/* <div> */}
-    {/* {queryRes !== null ? 
-    (
-      
-      <TileLayer
-          attribution='false'
-          url={queryRes}
-          />
-
+    {queryRes && queryRes !== null ? 
+    ( queryRes.map((item:string)=>{
+      return (
+        <TileLayer
+        attribution='false'
+        url={item}
+        />
+      )
+    })
   ) :
   ""
-    } */}
+    }
     {/* </div> */}
       
     </>

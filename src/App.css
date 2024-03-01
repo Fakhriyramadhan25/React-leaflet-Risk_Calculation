@@ -29,3 +29,137 @@
 .leaflet-control-layers{
     display: none;
 }
+
+.custom-container{
+    padding: 8px 8px;
+    border-radius: 5px;
+    background-color: white;
+    position: relative;
+    right: 50px;
+    top: 9px
+}
+
+.formSearch{
+    color: gray;
+    font-weight: 400;
+    border-radius: 5px;
+    font-size: small;
+    padding: 2px 0px;
+}
+
+.buttonSearch{
+    font-size: small;
+}
+
+.buttonSearch:hover{
+    background-color: skyblue;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+
+.inputSearch{
+    width: 240px;
+}
+
+.msgboxSearch{
+    width: 240px;
+    background-color: rgba(220,220,220, 0.2);
+    color: black
+}
+
+.itemSearch{
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.itemSearch:hover {
+    width: 240px;
+    background-color: rgba(135, 206, 235, 0.6);
+    color: black
+  }
+
+
+  .navigation-wrapper {
+    position: relative;
+  }
+
+  
+/* Square start  */
+
+.squaresFooter {
+    display: flex;
+    padding: 10px 0;
+    justify-content: center;
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .squares {
+    display: flex;
+    padding: 10px 0;
+    justify-content: center;
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .squares-2 {
+    display: flex;
+    padding: 10px 0;
+    justify-content: center;
+    position: absolute;
+    bottom: -70px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .squares-3 {
+    display: flex;
+    padding: 10px 0;
+    justify-content: center;
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .square3 {
+    border: none;
+    width: 10px;
+    height: 10px;
+    background: #ececec;
+    border-radius: 3px;
+    margin: 0 3px;
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .square3:focus {
+    outline: none;
+  }
+  
+  .square3.active {
+    background: #00bbf0;
+  }
+  .square {
+    border: none;
+    width: 10px;
+    height: 10px;
+    background: #ececec;
+    margin: 0 3px;
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .square:focus {
+    outline: none;
+  }
+  
+  .square.active {
+    background: #00bbf0;
+  }
+  
+  /* Square end  */

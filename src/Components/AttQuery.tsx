@@ -66,20 +66,20 @@ function AttQuery({
   return (
     <>
       {/* <!-- Modal toggle --> */}
-        <button className="bg-white p-2 rounded-lg z-20 absolute left-5 top-56 hover:bg-sky-300"
+        <button className="bg-white p-2 rounded-lg z-20 absolute left-[230px] top-5 hover:bg-sky-300"
         onClick={() => setShowModal(true)}
       >
-        <TbMapSearch size={26}/>
+        <TbMapSearch className="inline" size={26}/> <span className="inline">Imagery Satellite</span>
       </button>
 
       {showModal ? (
         <>
           <div
-            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none shadow-md"
+            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none shadow-md "
           >
             <div className="relative w-1/3 my-6 mx-auto max-w-3xl">
               {/*content*/}
-              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white/80 outline-none focus:outline-none ">
                 {/*header*/}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
                   <h3 className="text-3xl font-semibold">
@@ -106,8 +106,9 @@ function AttQuery({
                       <select className="rounded border-2 w-full py-2 px-3 text-black" name="imageName"
                         onChange={(e)=>addOperator(e)}>
                           <option value="" disabled selected>Select Image</option>
-                          <option value="LANDSAT/LC8_L1T_TOA">Landsat 8</option>
+                          <option value="LANDSAT/LC08/C02/T1_TOA">Landsat 8</option>
                           <option value="LANDSAT/LC09/C02/T1_TOA">Landsat 9</option>
+                          <option value="COPERNICUS/S2">Sentinel 2</option>
                       </select>
                     </div>
                     <div className="mb-4">
@@ -138,10 +139,10 @@ function AttQuery({
                   >
                     {modalAcc}
                   </button>
-                  <div className="ms-5">
+                  {/* <div className="ms-5">
                     <p>{JSON.stringify(state)}</p>
                     <p>{img.imageName}, {img.imageStart}, {img.imageEnd}</p>
-                  </div>
+                  </div> */}
 
                 </div>
               </div>
