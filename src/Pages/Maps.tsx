@@ -13,6 +13,13 @@ import { MdOutlineSpaceDashboard } from "react-icons/md";
 import ChartRes from '../Components/ChartRes';
 import { IoMdSwitch } from "react-icons/io";
 import L from 'leaflet';
+import pinBar from '../assets/pinBar.png';
+import pinHospital from '../assets/pinHospital.png';
+import pinRestaurant from '../assets/pinRestaurant.png';
+import pinCafe from '../assets/pinCafe.png';
+import pinShop from '../assets/pinShop.png';
+import pinEducation from '../assets/pinEducation.png';
+
 
 
 // map features 
@@ -43,15 +50,15 @@ export const Maps: React.FC = () => {
   const [layerSwitcher, setLayerSwitcher] = useState<boolean>(true);
   const [amenities, setAmenities]=useState<any[]>([]);
   const [shops, setShops]=useState<any[]>([]);
-  const [result, setResult] = useState<number>();
+  const [result, setResult] = useState<any>();
   const[recWay, setRecWay] = useState<string>();
   const[dashboardAct, setDashboardAct] = useState<boolean>(false);
   const[HouseAct,setHouseAct] = useState<boolean>(false);
   const[houseData, setHouseData] = useState<any[]>([]);
-  const[countHouse, setCountHouse] = useState<number>();
-  const[totalBuilding, setTotalBuilding] = useState<number>();
+  const[countHouse, setCountHouse] = useState<any>();
   const [activateIS, setActivateIS] =useState<boolean>(true);
-  const [activateDB, setActivateDB] = useState<boolean>(false)
+  const [activateDB, setActivateDB] = useState<boolean>(false);
+  const [popBound, setPopBound ] = useState<any[]>([]);
 
 
   const opassURL = 'https://overpass-api.de/api/interpreter?data=';
@@ -87,6 +94,10 @@ export const Maps: React.FC = () => {
         return [data.lng, data.lat]})
       
       setBoundAOI(latlong);
+
+
+      setPopBound([bounds.getSouthWest().lat,bounds.getSouthWest().lng,bounds.getNorthEast().lat,bounds.getNorthEast().lng]);
+      
       const rectangleQuery = 
       `
         [out:json];
@@ -312,15 +323,16 @@ export const Maps: React.FC = () => {
       // let test = good.reduce((acc, val)=> acc+val, 0)
 
       return sumbuilding
-    },[result, houseData])
+    },[result, countHouse])
 
 
 
     const handleClearAll = () => {
       setDataAcquired([]);
       setAmenities([]);
-      // setPolygonAcq([""]);
-      // setRectangles("");
+      setResult([]);
+      setShops([]);
+      setCountHouse([]);
     }
 
     const handleDashboard = (e:any) => {
@@ -340,19 +352,25 @@ export const Maps: React.FC = () => {
 
       // Define marker icons for different categories
   const iconOptions:any = {
-    // restaurant: new L.Icon({ iconUrl: 'red-marker.png', iconSize: [25, 41] }),
-    // school: new L.Icon({ iconUrl: 'blue-marker.png', iconSize: [25, 41] }),
-    // hospital: new L.Icon({ iconUrl: 'green-marker.png', iconSize: [25, 41] })
+    restaurant: new L.Icon({ iconUrl: pinRestaurant, iconSize: [40, 40] }),
+    school: new L.Icon({ iconUrl: pinEducation, iconSize: [40, 40] }),
+    hospital: new L.Icon({ iconUrl: pinHospital, iconSize: [40, 40] }),
+    bar: new L.Icon({ iconUrl: pinBar, iconSize: [40, 40] }),
+    shop: new L.Icon({ iconUrl: pinShop, iconSize: [40, 40] }),
+    cafe: new L.Icon({ iconUrl: pinCafe, iconSize: [40, 40] }),
+    default: new L.Icon({ iconUrl: pinCafe, iconSize: [60, 60] }),
 
-    red: new L.Icon({ iconUrl: 'https://cdn-icons-png.flaticon.com/512/2377/2377874.png', iconSize: [35, 41] }), 
-    blue: new L.Icon({ iconUrl: 'blue-marker.png', iconSize: [25, 41] }),
-    green: new L.Icon({ iconUrl: 'green-marker.png', iconSize: [25, 41] })
+
+    red: new L.Icon({ iconUrl: pinRestaurant, iconSize: [60, 60] }), 
+    blue: new L.Icon({ iconUrl: pinEducation, iconSize: [60, 60] }),
+    green: new L.Icon({ iconUrl: pinCafe, iconSize: [60, 60] })
   };
 
   const data = [
     { lat: 51.505, lng: -0.09, category: 'red' },
     { lat: 51.51, lng: -0.1, category: 'blue' },
-    { lat: 51.515, lng: -0.11, category: 'green' }
+    { lat: 51.515, lng: -0.11, category: 'green' },
+    { lat: 51.52, lng: -0.12}
   ];
 
 
@@ -360,13 +378,14 @@ export const Maps: React.FC = () => {
   <>
     
     <div className='z-10'>
-      <button className='bg-white p-2 rounded-md z-20 absolute left-[400px] top-5 hover:bg-red-300' onClick={handleClearAll}>
+      <button className='bg-white p-2 rounded-lg z-20 absolute left-[400px] top-5 hover:bg-red-300' onClick={handleClearAll}>
         <VscClearAll className="inline" size={26}/> <span className='inline'>Clear All</span>
         </button>
     </div>
 
-    <div className='z-20 absolute left-[132px] top-5'><button className='bg-white font-medium p-2 rounded-md hover:bg-sky-300' onClick={handleSwitch}>
-      <IoMdSwitch className="inline" size={26}/> <span className='inline' onClick={handleSwitchID}>Switch</span>
+    <div className='z-20 absolute left-[132px] top-5'><button className='bg-sky-100 font-medium p-2 rounded-lg hover:bg-sky-300' onClick={handleSwitch}>
+      <IoMdSwitch className="inline" size={26}/> <span className='inline' onClick={handleSwitchID}>{activateIS === true ? "Imagery Satellite":"Building Data"}</span>
+  
       </button>
     </div>
 
@@ -392,24 +411,24 @@ export const Maps: React.FC = () => {
       {polygonAcq && JSON.stringify(polygonAcq)}
     </div> */}
 
-    <div className='z-10'>
+    {/* <div className='z-10'>
     <QueryResult bounds={boundAOI}/>
-    </div>
+    </div> */}
     
-    <div className='z-10 absolute right-28 top-16'><button className='bg-white font-bold p-2 rounded-md hover:bg-sky-300' onClick={handleHide}>
+    <div className='z-10 absolute right-28 top-16'><button className='bg-white font-bold p-2 rounded-lg hover:bg-sky-300' onClick={handleHide}>
       <SlLayers size={25}/>
       </button>
     </div>
 
-    <div className='z-20 absolute right-16 top-16'><button className='bg-white font-bold p-2 rounded-md hover:bg-sky-300' onClick={handleDashboard}>
+    <div className='z-20 absolute right-16 top-16'><button className='bg-white font-bold p-2 rounded-lg hover:bg-sky-300' onClick={handleDashboard}>
       <MdOutlineSpaceDashboard size={25}/>
       </button>
     </div>
 
 
     {dashboardAct && 
-    <div className='z-10 absolute right-16 top-28 bg-white/70 px-8 py-4 rounded-md transition ease-in-out transform translate-y-1 overflow-y-scroll h-[550px] w-[450px]'>
-      <ChartRes/>
+    <div className='z-10 absolute right-16 top-28 bg-white/70 px-8 py-4 rounded-lg transition ease-in-out transform translate-y-1 overflow-y-scroll h-[550px] w-[450px]'>
+      <ChartRes popBounds={popBound} house={countHouse} amenities={result} total={totBuilding}/>
     </div>
     }
     
@@ -439,12 +458,28 @@ export const Maps: React.FC = () => {
                   }/>
     </FeatureGroup>
 
+    {data!== null ? (
+        data.map((data:any)=>{
+          const icon = iconOptions[data.category] || iconOptions.default;
+          return (
+          <Marker position={[data.lat,data.lng]} icon={icon}>
+            <Popup>
+              Name: hi there
+
+            </Popup>
+          </Marker>
+          )
+        })
+      ): ""}
+
     {dataAcquired !== null ? (
         dataAcquired.map((data:any)=>{
+          const icon = iconOptions[data.tags.amenity] || iconOptions.default;
           return (
-          <Marker key={data.id} position={[data.lat,data.lon]} >
+          <Marker key={data.id} position={[data.lat,data.lon]} icon={icon}>
             <Popup>
               Name: {data.tags.name} <br/>
+  
 
             </Popup>
           </Marker>
@@ -478,9 +513,9 @@ export const Maps: React.FC = () => {
           />
         </LayersControl.BaseLayer>
 
-        {/* <LayersControl.Overlay name="GEE" checked>
-          <QueryResult bounds={boundAOI}/>
-      </LayersControl.Overlay> */}
+        <LayersControl.Overlay name="GEE" checked>
+          <QueryResult bounds={boundAOI} ActivateIS={activateIS}/>
+      </LayersControl.Overlay>
 
 
       <LayersControl.Overlay name="marker" checked>

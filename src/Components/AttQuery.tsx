@@ -60,16 +60,18 @@ function AttQuery({
       imageStart: String(state.dateStart), 
       imageEnd: String(state.dateEnd)
     }
-      ))
+      ));
+
+      setShowModal(false);
   }
 
   return (
     <>
       {/* <!-- Modal toggle --> */}
-        <button className="bg-white p-2 rounded-lg z-20 absolute left-[230px] top-5 hover:bg-sky-300"
+        <button className="bg-white p-2 rounded-lg z-20 absolute left-[305px] top-5 hover:bg-sky-300"
         onClick={() => setShowModal(true)}
       >
-        <TbMapSearch className="inline" size={26}/> <span className="inline">Imagery Satellite</span>
+        <TbMapSearch className="inline" size={26}/> <span className="inline">Query</span>
       </button>
 
       {showModal ? (
@@ -131,9 +133,9 @@ function AttQuery({
 
 
                 {/*footer*/}
-                <div className="flex items-center justify-start p-6 border-t border-solid border-blueGray-200">
+                <div className="flex items-center justify-center p-6 border-t border-solid border-blueGray-200">
                   <button
-                    className="bg-sky-500 text-white font-bold uppercase rounded-lg px-3 py-2 text-sm hover:bg-blue-500"
+                    className="bg-sky-500 text-white font-bold uppercase rounded-lg px-12 py-2 text-sm hover:bg-blue-500"
                     type="button"
                     onClick={handleImage}
                   >

@@ -15,24 +15,24 @@ interface imgParam {
 
 function QueryResult(props:any) {
     const [queryRes, setQueryRes] = useState<string[]>([]);
-    const [ imgParam, setImgParam ] = useState<imgParam>({
-      imageName: 'LANDSAT/LC8_L1T_TOA',
-      imageStart:'2015-12-01', 
-      imageEnd: '2015-12-31',
-      imageBounds: [
-        [9.261474609375002, 48.824592829935014], 
-        [9.261474609375002, 48.75217601689752],
-        [9.151611328125002, 48.75217601689752], 
-        [9.151611328125002, 48.824592829935014]
-    ]
-    });
+    // const [ imgParam, setImgParam ] = useState<imgParam>({
+    //   imageName: 'LANDSAT/LC8_L1T_TOA',
+    //   imageStart:'2015-12-01', 
+    //   imageEnd: '2015-12-31',
+    //   imageBounds: [
+    //     [9.261474609375002, 48.824592829935014], 
+    //     [9.261474609375002, 48.75217601689752],
+    //     [9.151611328125002, 48.75217601689752], 
+    //     [9.151611328125002, 48.824592829935014]
+    // ]
+    // });
     const [iBounds, setIBounds] = useState<any>(
       [
-        [9.261474609375002, 48.824592829935014], 
-        [9.261474609375002, 48.75217601689752],
-        [9.151611328125002, 48.75217601689752], 
-        [9.151611328125002, 48.824592829935014]
-    ]
+        [8.642120361328127,48.84837497332759],
+    [8.642120361328127,48.928788498394496],
+    [8.898925781250002,48.928788498394496],
+    [8.898925781250002,48.84837497332759]
+  ]
     )
 
     // const imageName = 'LANDSAT/LC8_L1T_TOA';
@@ -46,15 +46,17 @@ function QueryResult(props:any) {
 
     const img = useAppSelector(state=>state.counter)
     
-    
+    // console.log(iBounds);
     // const bounds = props.bounds;
 
     useEffect(()=>{
-      if(props.bounds){
-        setIBounds(props.bounds)
+      if(props.bounds && props.bounds != null){
+        setIBounds(props.bounds);
       }
   
+    },[ props.bounds ])
 
+    useEffect(()=>{
         const fetchingData = async () => { 
           await fetch("http://localhost:5173/GEE", {
             method: "POST",
@@ -72,7 +74,7 @@ function QueryResult(props:any) {
               // imageName: imageName,
               // imageStart: imageStart,
               // imageEnd: imageEnd,
-              imageBounds: bounds})
+              imageBounds: iBounds})
         
           })
             .then((response) => response.json())
@@ -83,12 +85,12 @@ function QueryResult(props:any) {
             
           }
 
-          if(props.ActivateIS && props.ActivateIS === true){
+          if(img && img.imageName != "LANDSAT/LC8_L1T_TOA" && props.ActivateIS && props.ActivateIS === true) {
             fetchingData();
           }
           
           
-    },[ img, props.bounds ])
+    },[ img])
 
   return (
     <>
@@ -99,7 +101,7 @@ function QueryResult(props:any) {
     </div> */}
 
 {/* <div> */}
-    {queryRes && queryRes !== null ? 
+    {/* {queryRes && queryRes !== null ? 
     ( queryRes.map((item:string)=>{
       return (
         <TileLayer
@@ -110,7 +112,7 @@ function QueryResult(props:any) {
     })
   ) :
   ""
-    }
+    } */}
     {/* </div> */}
       
     </>

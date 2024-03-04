@@ -23,7 +23,7 @@ function Headers() {
     </div>
     
     <div className='text-black text-2xl text-white font-semibold text-xl mt-4'>
-     <button className='py-2 px-4 bg-emerald-400 rounded-md'>Login</button>
+     <button className='py-2 px-4 bg-emerald-400 rounded-lg'>Login</button>
     </div>
 
     </div>

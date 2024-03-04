@@ -28,9 +28,9 @@ router.post('/', async (req, res)=>{
 
     
 
-    const imageRaw = ee.ImageCollection('LANDSAT/LC8_L1T_TOA');
-    const imageQuery = imageRaw.filterBounds(AOI).filterDate('2013-12-01', '2013-12-31')
-    .sort('CLOUD_COVER').first();
+    // const imageRaw = ee.ImageCollection('LANDSAT/LC8_L1T_TOA');
+    // const imageQuery = imageRaw.filterBounds(AOI).filterDate('2013-12-01', '2013-12-31')
+    // .sort('CLOUD_COVER').first();
 
     const visualParams = {
         'bands': ['B5', 'B4', 'B3'],

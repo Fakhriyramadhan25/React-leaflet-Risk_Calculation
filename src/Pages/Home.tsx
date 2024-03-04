@@ -157,7 +157,7 @@ function Slide({ key, image }:any) {
         </span>
       </div>
       <Link to="/maps">
-      <div className="px-5 py-2 bg-emerald-500 text-white rounded-md border-black cd space-x-2 hover:bg-green-200 hover:text-black">
+      <div className="px-5 py-2 bg-emerald-500 text-white rounded-lg border-black cd space-x-2 hover:bg-green-200 hover:text-black">
       <span className="inline font-semibold text-lg">Visit Map  </span>
       <FaMapMarkedAlt className="inline mb-2" size={32}/> 
     </div>
