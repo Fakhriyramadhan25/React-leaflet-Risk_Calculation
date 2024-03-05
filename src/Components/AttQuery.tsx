@@ -110,7 +110,7 @@ function AttQuery({
                           <option value="" disabled selected>Select Image</option>
                           <option value="LANDSAT/LC08/C02/T1_TOA">Landsat 8</option>
                           <option value="LANDSAT/LC09/C02/T1_TOA">Landsat 9</option>
-                          <option value="COPERNICUS/S2">Sentinel 2</option>
+                          <option value="COPERNICUS/S2_SR">Sentinel 2</option>
                       </select>
                     </div>
                     <div className="mb-4">

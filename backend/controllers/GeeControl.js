@@ -33,10 +33,10 @@ router.post('/', async (req, res)=>{
     // .sort('CLOUD_COVER').first();
 
     const visualParams = {
-        'bands': ['B5', 'B4', 'B3'],
+        'bands': ['B4', 'B3', 'B2'],
         'min': 0,
-        'max': 0.5,
-        'gamma': [0.95, 1.1, 1]
+        'max': 0.4,
+        // 'gamma': [0.95, 1.1, 1]
     }
 
     // let mapInfo = "";

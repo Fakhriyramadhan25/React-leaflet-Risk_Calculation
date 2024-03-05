@@ -101,7 +101,7 @@ function QueryResult(props:any) {
     </div> */}
 
 {/* <div> */}
-    {/* {queryRes && queryRes !== null ? 
+    {queryRes && queryRes !== null ? 
     ( queryRes.map((item:string)=>{
       return (
         <TileLayer
@@ -112,7 +112,7 @@ function QueryResult(props:any) {
     })
   ) :
   ""
-    } */}
+    }
     {/* </div> */}
       
     </>

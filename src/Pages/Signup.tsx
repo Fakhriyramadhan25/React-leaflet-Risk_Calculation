@@ -99,9 +99,9 @@ const handleSubmit = async () => {
         <div
           className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-10 outline-none focus:outline-none shadow-md "
         >
-          <div className="relative w-1/3 my-2 mx-auto max-w-3xl">
+          <div className="">
             {/*content*/}
-            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white/80 outline-none focus:outline-none ">
+            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white/80 outline-none focus:outline-none w-[560px]">
               <div className="flex items-start justify-start p-5 border-b border-solid border-blueGray-200 rounded-t">
                 <h3 className="text-4xl font-semibold">
                 Sign up

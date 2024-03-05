@@ -20,7 +20,7 @@ import pinCafe from '../assets/pinCafe.png';
 import pinShop from '../assets/pinShop.png';
 import pinEducation from '../assets/pinEducation.png';
 
-
+import Legend from '../Components/Legend';
 
 // map features 
 // import { GetLatLong } from '../Components/GetLatLong';
@@ -59,6 +59,7 @@ export const Maps: React.FC = () => {
   const [activateIS, setActivateIS] =useState<boolean>(true);
   const [activateDB, setActivateDB] = useState<boolean>(false);
   const [popBound, setPopBound ] = useState<any[]>([]);
+  const [activateLegend, setActivateLegend]= useState<boolean>(false);
 
 
   const opassURL = 'https://overpass-api.de/api/interpreter?data=';
@@ -79,7 +80,7 @@ export const Maps: React.FC = () => {
   }
 
     const viewMaps : viewMaps = {
-      centerObj: {lat:48.824592829935014 , lng: 9.261474609375002},
+      centerObj: {lat:-6.901765693859082 , lng: 107.6186336220735},
       zoom: 10,
       scrollWheelZoom: true,
       zoomControl: false
@@ -96,7 +97,7 @@ export const Maps: React.FC = () => {
       setBoundAOI(latlong);
 
 
-      setPopBound([bounds.getSouthWest().lat,bounds.getSouthWest().lng,bounds.getNorthEast().lat,bounds.getNorthEast().lng]);
+      setPopBound([bounds.getSouthWest().lng,bounds.getSouthWest().lat,bounds.getNorthEast().lng,bounds.getNorthEast().lat]);
       
       const rectangleQuery = 
       `
@@ -159,6 +160,7 @@ export const Maps: React.FC = () => {
           });
           // console.log(dataFetched);
           setDataAcquired((prevData)=> [...prevData, ...dataFetched]);
+         
         })
         .catch((error)=>console.log(error))
       }
@@ -307,6 +309,15 @@ export const Maps: React.FC = () => {
 
     },[amenities, shops])
 
+    useEffect(()=>{
+      if(dataAcquired[0] && dataAcquired !== null){
+        setActivateLegend(true);
+      }
+      else {
+        setActivateLegend(false);
+      }
+    },[dataAcquired])
+
 
     const totBuilding:any = useMemo(()=>{
       let sumbuilding = 0
@@ -352,30 +363,33 @@ export const Maps: React.FC = () => {
 
       // Define marker icons for different categories
   const iconOptions:any = {
-    restaurant: new L.Icon({ iconUrl: pinRestaurant, iconSize: [40, 40] }),
-    school: new L.Icon({ iconUrl: pinEducation, iconSize: [40, 40] }),
-    hospital: new L.Icon({ iconUrl: pinHospital, iconSize: [40, 40] }),
-    bar: new L.Icon({ iconUrl: pinBar, iconSize: [40, 40] }),
-    shop: new L.Icon({ iconUrl: pinShop, iconSize: [40, 40] }),
-    cafe: new L.Icon({ iconUrl: pinCafe, iconSize: [40, 40] }),
+    restaurant: new L.Icon({ iconUrl: pinRestaurant, iconSize: [60, 60] }),
+    school: new L.Icon({ iconUrl: pinEducation, iconSize: [60, 60] }),
+    hospital: new L.Icon({ iconUrl: pinHospital, iconSize: [60, 60] }),
+    bar: new L.Icon({ iconUrl: pinBar, iconSize: [60, 60] }),
+    shop: new L.Icon({ iconUrl: pinShop, iconSize: [60, 60] }),
+    cafe: new L.Icon({ iconUrl: pinCafe, iconSize: [60, 60] }),
     default: new L.Icon({ iconUrl: pinCafe, iconSize: [60, 60] }),
 
 
-    red: new L.Icon({ iconUrl: pinRestaurant, iconSize: [60, 60] }), 
-    blue: new L.Icon({ iconUrl: pinEducation, iconSize: [60, 60] }),
-    green: new L.Icon({ iconUrl: pinCafe, iconSize: [60, 60] })
+    // red: new L.Icon({ iconUrl: pinRestaurant, iconSize: [60, 60] }), 
+    // blue: new L.Icon({ iconUrl: pinEducation, iconSize: [60, 60] }),
+    // green: new L.Icon({ iconUrl: pinCafe, iconSize: [60, 60] })
   };
 
-  const data = [
-    { lat: 51.505, lng: -0.09, category: 'red' },
-    { lat: 51.51, lng: -0.1, category: 'blue' },
-    { lat: 51.515, lng: -0.11, category: 'green' },
-    { lat: 51.52, lng: -0.12}
-  ];
+  // const data = [
+  //   { lat: 51.505, lng: -0.09, category: 'red' },
+  //   { lat: 51.51, lng: -0.1, category: 'blue' },
+  //   { lat: 51.515, lng: -0.11, category: 'green' },
+  //   { lat: 51.52, lng: -0.12}
+  // ];
 
 
   return (
   <>
+  <div className='z-20'>
+    <Legend activateLegend={activateLegend}/>
+  </div>
     
     <div className='z-10'>
       <button className='bg-white p-2 rounded-lg z-20 absolute left-[400px] top-5 hover:bg-red-300' onClick={handleClearAll}>
@@ -427,7 +441,7 @@ export const Maps: React.FC = () => {
 
 
     {dashboardAct && 
-    <div className='z-10 absolute right-16 top-28 bg-white/70 px-8 py-4 rounded-lg transition ease-in-out transform translate-y-1 overflow-y-scroll h-[550px] w-[450px]'>
+    <div className='z-10 absolute right-16 top-28 bg-white/70 px-8 py-4 rounded-lg transition ease-in-out transform translate-y-1 overflow-y-scroll h-3/4 w-1/4'>
       <ChartRes popBounds={popBound} house={countHouse} amenities={result} total={totBuilding}/>
     </div>
     }
@@ -458,7 +472,7 @@ export const Maps: React.FC = () => {
                   }/>
     </FeatureGroup>
 
-    {data!== null ? (
+    {/* {data!== null ? (
         data.map((data:any)=>{
           const icon = iconOptions[data.category] || iconOptions.default;
           return (
@@ -470,7 +484,7 @@ export const Maps: React.FC = () => {
           </Marker>
           )
         })
-      ): ""}
+      ): ""} */}
 
     {dataAcquired !== null ? (
         dataAcquired.map((data:any)=>{

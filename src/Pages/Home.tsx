@@ -144,7 +144,7 @@ function Slide({ key, image }:any) {
 
 
 
-      <div className="flex flex-col text-white items-center space-y-6  mx-auto text-center z-20 absolute top-1/3 left-1/3 ms-16">
+      <div className="flex flex-col text-white items-center space-y-6  mx-auto text-center z-20 absolute top-1/3 left-1/3 ms-4">
       <div className="w-[600px]">
         <p className="text-6xl text-navy-800 font-bold ">
           Post Natural Disaster Damages Estimator

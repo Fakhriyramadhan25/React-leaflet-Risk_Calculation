@@ -148,7 +148,6 @@ export const options3 = {
 
 export default function App({popBounds, house, amenities, total}:any) {
   const [pop, setPop] =useState<any>();
-  const [test,setTest] = useState<any>();
 
   const credentials:credentials = {
     accessToken: import.meta.env.VITE_accessToken,
@@ -158,12 +157,20 @@ export default function App({popBounds, house, amenities, total}:any) {
 
   const connection= 'carto_dw';
 
-  const query = 
-  "SELECT count(*) "+
-  "FROM carto-data.ac_u9791539.sub_worldpop_geography_nld_grid1km_v1 "+ 
-  "WHERE ST_INTERSECTSBOX(geom, 5.114748441755855, 52.09123574714653, 6.083640580404145,52.51829468259318);";
+  // const query = 
+  // "SELECT round(sum(pops),0) as result "+
+  // "FROM carto-dw-ac-n02zhz31.shared_us.indonesia_100m_pops "+ 
+  // "WHERE ST_INTERSECTSBOX(geom, 107.6186336220735, -6.901765693859082, 107.63105942056383, -6.891783114843436);";
 
-    // const query = `SELECT count(*) FROM carto-data.ac_u9791539.sub_worldpop_geography_nld_grid1km_v1 WHERE ST_INTERSECTSBOX(geom, ${popBounds[0]}, ${popBounds[1]}, ${popBounds[2]}, ${popBounds[3]});`;
+  // const query = 
+  // "SELECT pops "+
+  // "FROM carto-dw-ac-n02zhz31.shared_us.indonesia_100m_pops "+ 
+  // "WHERE geoid= 'wpqwk8ydf8yf';";
+
+  // -6.901765693859082, 107.6186336220735  ;  ; -6.891783114843436, 107.63105942056383
+
+
+    const query = `SELECT round(sum(pops),0) as result FROM carto-dw-ac-n02zhz31.shared_us.indonesia_100m_pops WHERE ST_INTERSECTSBOX(geom, ${popBounds[0]}, ${popBounds[1]}, ${popBounds[2]}, ${popBounds[3]});`;
 
   const fetchData = async () => {
     const result = await executeSQL({credentials, connection, query});
@@ -171,14 +178,14 @@ export default function App({popBounds, house, amenities, total}:any) {
   };
   
   useEffect(()=>{
-    if(popBounds && popBounds != null) {
+    if(popBounds[0] && popBounds[0] != null) {
       fetchData().then(rows => {
         console.log(rows);
-        setTest(rows);
+        setPop(rows);
       });
     }
     
-  }, [])
+  }, [popBounds])
   
   const Commercial = useMemo(()=>{
     const sumup1 = amenities[3] + amenities[4] + amenities[0] + amenities[5];
@@ -271,7 +278,7 @@ export default function App({popBounds, house, amenities, total}:any) {
       </div>
 
       <div className='inline'>
-      <span className='font-bold text-3xl inline-block ml-4 text-lime-800'>24 <span className='font-medium text-xs block'>Cassualties</span></span>
+      <span className='font-bold text-3xl inline-block ml-4 text-lime-800'>{pop && pop !== null ? pop[0].result : 0 } <span className='font-medium text-xs block'>Cassualties</span></span>
       
       </div>
     </div>
