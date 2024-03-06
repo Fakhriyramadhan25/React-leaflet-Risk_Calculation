@@ -2,12 +2,7 @@
 
 ### Description
 
-This dashboard serves the function of estimating the damage caused to building and calculating the possible casualties by natural disasters.
-To know the affected location by natural disaster user could get the specific imagery satellite when the disaster happened just by inputting
-the start date, end date, and the boundary of the area. The imagery satellite option will be Sentinel2, Landsat 8, and Landsat 9. Afterwards,
-user could inspect the specific location and draw a rectangle to retreive the damages building and possible cassualties. The Dashboard will
-provide building data such as commercial, restaurant, hospital, school, and residents. While the casualties is estimated through the grid
-population model provided by world population org in the size of 100 x 100 sqm.
+This dashboard serves the function of estimating the damage caused to building and calculating the possible casualties by natural disasters. To know the affected location by natural disaster user could get the specific imagery satellite when the disaster happened just by inputting the start date, end date, and the boundary of the area. The imagery satellite option will be Sentinel2, Landsat 8, and Landsat 9. Afterwards, user could inspect the specific location and draw a rectangle to retrieve the damages building and possible casualties. The Dashboard will provide building data such as commercial, restaurant, hospital, school, and residents. While the casualties is estimated through the grid population model provided by world population org in the size of 100 x 100 sqm.
 
 ### Technology
 
